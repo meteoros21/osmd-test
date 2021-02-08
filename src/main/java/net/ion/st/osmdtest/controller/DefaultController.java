@@ -11,18 +11,12 @@ public class DefaultController
     @GetMapping({"/", "", "/home", "/index"})
     public String home()
     {
-        return "home";
+        return "home-mobile";
     }
 
     @GetMapping("/mobile")
     public String homeMobile()
     {
         return "home-mobile";
-    }
-
-    @GetMapping("/mobile2")
-    public String homeMobile2()
-    {
-        return "home-mobile2";
     }
 }
