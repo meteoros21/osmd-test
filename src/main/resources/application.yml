@@ -1,0 +1,38 @@
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  devtools:
+    livereload:
+      enabled: true
+    freemarker:
+      cache: false
+  messages:
+    basename: message/message
+    encoding: UTF-8
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  session:
+    timeout: 1m
+
+auth-server:
+  jwt-sign-key: Qqkrtjdgh21
+
+resources:
+  upload-url: /uploaded-data
+  upload-path: /app/event/uploaded-data
+
+server:
+  port: 8989
+  forward-headers-strategy: native
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    org.hibernate: error
+    org.springframework.security: error
