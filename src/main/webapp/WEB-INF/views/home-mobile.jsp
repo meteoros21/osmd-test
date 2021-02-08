@@ -50,19 +50,17 @@
 <div class="loader-container" style="display: none">
     <div class="loader"></div>
 </div>
-<main>
-    <div class="controls">
-        <button id="btn-play">Play</button>
-        <button id="btn-pause">Pause</button>
-        <button id="btn-stop">Stop</button>
-        <button id="btn-test1">Z-In</button>
-        <button id="btn-test2">Z-Out</button>
-    </div>
-    <div style="display: none">
-        <h2 id="loading">Loading</h2>
-    </div>
-    <div id="score" style="width: 100%"></div>
-</main>
+
+<div class="controls" style="position: fixed; top: 0; width: 100%; background-color: cornsilk; z-index: 100">
+    <button id="btn-play">Play</button>
+    <button id="btn-pause">Pause</button>
+    <button id="btn-stop">Stop</button>
+    <button id="btn-test1">Z-In</button>
+    <button id="btn-test2">Z-Out</button>
+</div>
+
+<div id="score" style="width: 100%; flex-grow: 1"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@0.8.5/build/opensheetmusicdisplay.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/osmd-audio-player/umd/OsmdAudioPlayer.min.js"></script>
 <%--<script src="/js/app.js"></script>--%>
@@ -83,7 +81,6 @@
 
             if (result === true)
             {
-                hideLoadingMessage();
                 registerButtonEvents(audioPlayer);
 
                 svg = document.getElementById('osmdSvgPage1');
@@ -130,11 +127,6 @@
     function hideWaitScreen()
     {
         $('.loader-container').css('display', 'none');
-    }
-
-    function hideLoadingMessage()
-    {
-        document.getElementById("loading").style.display = "none";
     }
 
     function registerButtonEvents(audioPlayer)
