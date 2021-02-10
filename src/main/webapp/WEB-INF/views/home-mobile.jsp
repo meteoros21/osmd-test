@@ -5,7 +5,12 @@
     <meta charset="UTF-8">
     <title>OpenSheetMusicDisplay Test2</title>
     <meta name=viewport content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" integrity="sha512-3q8fi8M0VS+X/3n64Ndpp6Bit7oXSiyCnzmlx6IDBLGlY5euFySyJ46RUlqIVs0DPCGOypqP8IRk/EyPvU28mQ==" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js" integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA==" crossorigin="anonymous"></script>
+    <script src="/js/float-menu.js"></script>
     <style>
         body {
             touch-action: none;
@@ -40,10 +45,51 @@
             animation: spin 2s linear infinite;
         }
 
+        #float-menu {
+            position: absolute;
+            min-width: 180px;
+            min-height: 200px;
+            background-color: white;
+            padding: 10px;
+            top: 0;
+            right: 0;
+            transform: translateX(101%);
+            border: 1px solid #cccccc;
+            z-index: 999;
+        }
+
+        .btn-top-menu {
+            color: darkgrey;
+        }
+
+        .btn-circle.btn-sm {
+            width: 30px;
+            height: 30px;
+            padding: 6px 0;
+            border: 1px solid #cccccc;
+            border-radius: 15px;
+            font-size: 8px;
+            text-align: center;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        @keyframes float-menu-in {
+            0% {transform: translateX(100%)}
+            10% {transform: translateX(90%)}
+            90% {transform: translateX(0%)}
+            100% {transform: translateX(0%)}
+        }
+
+        @keyframes float-menu-out {
+            0% {transform: translateX(0%)}
+            10% {transform: translateX(0%)}
+            90% {transform: translateX(90%)}
+            100% {transform: translateX(100%)}
+        }
+
     </style>
 </head>
 <body>
@@ -51,15 +97,50 @@
     <div class="loader"></div>
 </div>
 
-<div class="controls" style="position: fixed; top: 0; width: 100%; background-color: cornsilk; z-index: 100">
-    <button id="btn-play">Play</button>
-    <button id="btn-pause">Pause</button>
-    <button id="btn-stop">Stop</button>
-    <button id="btn-test1">Z-In</button>
-    <button id="btn-test2">Z-Out</button>
+<div style="position: fixed; top: 0; width: 100%; background-color: cornsilk; z-index: 100">
+    <div style="display: flex; flex-direction: row; padding: 10px">
+        <div style="margin-top: 10px; flex-grow: 1">OSMD - Test</div>
+        <div style="float: right;">
+            <div style="padding: 0 0 0 20px; margin-right: 20px; margin-top: 1px">
+                <a id="btnShowMenu" class="btn-top-menu" href="#">
+                    <i class="fa fa-bars" style="font-size: 28px"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="float-menu" class="float-menu" style="">
+        <div style="float: right;">
+            <div style="padding: 0 0 0 20px; margin-right: 19px">
+                <a id="btnHideMenu" class="btn-top-menu" href="#">
+                    <i class="fa fa-bars" style="font-size: 28px"></i>
+                </a>
+            </div>
+        </div>
+        <div style="float: left; margin-top: 40px">
+            <div>Play Controls</div>
+            <div style="margin-bottom: 10px">
+                <button type="button" id="btn-play" class="btn-circle btn-sm btn-primary">
+                    <i class="fa fa-play"></i>
+                </button>
+                <button type="button" id="btn-pause" class="btn-circle btn-sm btn-danger"><i class="fa fa-pause"></i></button>
+                <button type="button" id="btn-stop" class="btn-circle btn-sm btn-success"><i class="fa fa-stop"></i></button>
+            </div>
+            <div>Zoom Controls</div>
+            <div style="margin-bottom: 10px">
+                <button type="button" id="btn-test1" class="btn-sm">Z-In</button>
+                <button type="button" id="btn-test2" class="btn-sm">Z-Out</button>
+            </div>
+            <div>BPM</div>
+            <div>
+                <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="100"/>
+            </div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
 </div>
 
-<div id="score" style="width: 100%; flex-grow: 1"></div>
+<div id="score" style="width: 100%; margin-top: 20px"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@0.8.5/build/opensheetmusicdisplay.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/osmd-audio-player/umd/OsmdAudioPlayer.min.js"></script>
@@ -72,6 +153,8 @@
     let point = null;
     let viewBox = null;
     let prevMatrix = null;
+
+    let slider;
 
     $(document).ready(function () {
 
@@ -91,6 +174,17 @@
             }
 
             hideWaitScreen();
+        });
+
+        slider = $('#ex1').slider({
+            formatter: function(value) {
+                return 'Current value: ' + value;
+            }
+        });
+        slider.on('slideStop', function () {
+            let val = slider.slider('getValue');
+            alert(val);
+            audioPlayer.setBpm(val);
         });
     });
 
@@ -114,6 +208,10 @@
         audioPlayer.on("iteration", notes => {
             console.log(notes);
         });
+
+        slider.slider('setValue', audioPlayer.playbackSettings.bpm);
+        //slider.setValue(audioPlayer.playbackSettings.bpm);
+        //alert(audioPlayer.playbackSettings.bpm);
 
         if (typeof callback === 'function')
             callback(true);
