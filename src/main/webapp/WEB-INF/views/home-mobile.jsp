@@ -116,7 +116,7 @@
                 </a>
             </div>
         </div>
-        <div style="float: left; margin-top: 40px">
+        <div style="float: left; margin-top: 40px" id="controller">
             <div>Play Controls</div>
             <div style="margin-bottom: 10px">
                 <button type="button" id="btn-play" class="btn-circle btn-sm btn-primary">
@@ -134,8 +134,14 @@
             <div>
                 <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="100"/>
             </div>
-            <div></div>
-            <div></div>
+<%--            <div>Volumn(Left)</div>--%>
+<%--            <div>--%>
+<%--                <input id="volumn-left" data-slider-id='vol1Slider' type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.2" data-slider-value="1"/>--%>
+<%--            </div>--%>
+<%--            <div>Volumn(Right)</div>--%>
+<%--            <div>--%>
+<%--                <input id="volumn-right" data-slider-id='vol2Slider' type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.2" data-slider-value="1"/>--%>
+<%--            </div>--%>
         </div>
     </div>
 </div>
@@ -156,6 +162,52 @@
 
     let slider;
 
+    function addVolumnSlider(name, instrumentId, voiceId, volume)
+    {
+        let constroller = $('#controller');
+        let divLabel = $('<div>' + name + '</div>');
+        constroller.append(divLabel);
+
+        const sliderId = 'volume-' + instrumentId + '-' + voiceId;
+        let divSlider = $('<div><input id="' + sliderId + '" data-slider-id="' + sliderId + '" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.2" data-slider-value="1"/></div>');
+        constroller.append(divSlider);
+
+        let slider = $('#' + sliderId).slider({
+            formatter: function (value) {
+                return 'Volumne: ' + value;
+            }
+        })
+
+        slider.on('slideStop', function () {
+            let val = slider.slider('getValue');
+            const id = $(this).attr('id');
+            const parts = id.split('-');
+            setVolume(parts[1], parts[2], val);
+            //const instruement = audioPlayer.scoreInstruments[1];
+            //instruement.voices[0].Volume = val;
+        })
+    }
+
+    function setVolume(instrumentId, voiceId, volume)
+    {
+        for (let i = 0; i < audioPlayer.scoreInstruments.length; i++)
+        {
+            if (audioPlayer.scoreInstruments[i].id == instrumentId)
+            {
+                const voices = audioPlayer.scoreInstruments[i].voices;
+                for (let j = 0; j < voices.length; j++)
+                {
+                    if (voices[j].voiceId == voiceId)
+                    {
+                        const voice = voices[j];
+                        voice.Volume = volume;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     $(document).ready(function () {
 
         showWaitScreen();
@@ -171,6 +223,25 @@
 
                 point = svg.createSVGPoint();
                 prevMousePoint = svg.createSVGPoint();
+
+                audioPlayer.cursor = osmd.cursor;
+
+                const instruments = audioPlayer.scoreInstruments;
+                for (let i = 0; i < instruments.length; i++)
+                {
+                    const instrument = instruments[i];
+                    const label = instrument.nameLabel.text;
+                    const instruementName = instrument.Name;
+                    const voiceCnt = instrument.voices.length;
+
+                    const voice = instrument.voices[0];
+                    const voiceId = voice.voiceId;
+                    const voiceName = voice.Name;
+                    const Volume = voice.Volume;
+
+                    alert(instrument.id + ': ' + label);
+                    addVolumnSlider(label, instrument.id, voiceId, 1);
+                }
             }
 
             hideWaitScreen();
@@ -186,6 +257,27 @@
             alert(val);
             audioPlayer.setBpm(val);
         });
+
+        // volSliderLeft = $('#volumn-left').slider({
+        //     formatter: function (value) {
+        //         return 'Volumne: ' + value;
+        //     }
+        // })
+        // volSliderLeft.on('slideStop', function () {
+        //     let val = volSliderLeft.slider('getValue');
+        //     const instruement = audioPlayer.scoreInstruments[1];
+        //     instruement.voices[0].Volume = val;
+        //     //alert(val);
+        // })
+        // volSliderRight = $('#volumn-right').slider({
+        //     formatter: function (value) {
+        //         return 'Volumne: ' + value;
+        //     }
+        // })
+        // volSliderRight.on('slideStop', function () {
+        //     let val = volSliderRight.slider('getValue');
+        //     alert(val);
+        // })
     });
 
     async function loadScore(url, callback)
@@ -215,6 +307,17 @@
 
         if (typeof callback === 'function')
             callback(true);
+    }
+
+    function getAvailableInstruments()
+    {
+        if (!audioPlayer.availableInstruments)
+            return [];
+
+        return audioPlayer.availableInstruments.map(i => ({
+            text: i.name,
+            value: i.midiId
+        }));
     }
 
     function showWaitScreen()
